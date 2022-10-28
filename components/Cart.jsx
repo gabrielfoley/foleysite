@@ -10,7 +10,7 @@ import getStripe from '../lib/getStripe';
 
 const Cart = () => {
   const cartRef = useRef();
-  const { totalPrice, totalQuantities, cartItems, setShowCart, toggleCartItemQuantity: toggleCartItemQuantity, onRemove } = useStateContext();
+  const { totalPrice, totalQuantities, cartItems, setShowCart, toggleCartItemQuantity, onRemove, quantities } = useStateContext();
 
   const handleCheckout = async () => {
     const stripe = await getStripe();
@@ -20,12 +20,13 @@ const Cart = () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(cartItems),
+      body: JSON.stringify(cartItems, quantities),
     });
 
     if(response.statusCode === 500) return;
     
     const data = await response.json();
+    console.log(data.id);
 
     toast.loading('Redirecting...');
 

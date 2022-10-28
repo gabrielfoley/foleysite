@@ -15,9 +15,10 @@ export default async function handler(req, res) {
           {shipping_rate: 'shr_1Lxg1YDYzJ2xtZLyBwnxalIV'},
         ],
 
-        line_items: req.body.map((item) => {
+        line_items: req.body.cartItems.map((item,index) => {
           const img = item.image[0].asset._ref;
           const newImage = img.replace('image-', 'https://cdn.sanity.io/images/2qqwxpih/production/').replace('-webp', '.webp');
+          const quantityIndex = index
 
           return {
             price_data: {
@@ -32,7 +33,7 @@ export default async function handler(req, res) {
               enabled: true,
               minimum: 1,
             },
-            quantity: item.quantity
+            quantity: req.body.quantities[quantityIndex],
           }
       }),
     
