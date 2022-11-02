@@ -4,6 +4,7 @@ const stripe = new Stripe(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY);
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
+
     try {
       const params = {
         submit_type: 'pay',
@@ -15,10 +16,9 @@ export default async function handler(req, res) {
           {shipping_rate: 'shr_1Lxg1YDYzJ2xtZLyBwnxalIV'},
         ],
 
-        line_items: req.body.cartItems.map((item,index) => {
+        line_items: req.body.map((item) => {
           const img = item.image[0].asset._ref;
           const newImage = img.replace('image-', 'https://cdn.sanity.io/images/2qqwxpih/production/').replace('-webp', '.webp');
-          const quantityIndex = index
 
           return {
             price_data: {
@@ -33,16 +33,16 @@ export default async function handler(req, res) {
               enabled: true,
               minimum: 1,
             },
-            quantity: req.body.quantities[quantityIndex],
+            quantity: item.quantity
           }
       }),
     
         success_url: `${req.headers.origin}/?success=true`,
         cancel_url: `${req.headers.origin}/?canceled=true`,
-        automatic_tax: {enabled: true},
       }
       // Create Checkout Sessions from body params.
       const session = await stripe.checkout.sessions.create(params);
+      
       res.status(200).json(session);
     } catch (err) {
       res.status(err.statusCode || 500).json(err.message);

@@ -26,7 +26,6 @@ export const StateContext = ({ children }) => {
           quantity: cartProduct.quantity + quantity
         }
       })
-
       setCartItems(updatedCartItems);
     } else {
       product.quantity = quantity;
